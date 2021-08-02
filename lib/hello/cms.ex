@@ -137,6 +137,17 @@ defmodule Hello.CMS do
   defp handle_existing_author({:error, changeset}) do
     Repo.get_by!(Author, user_id: changeset.data.user_id)
   end
+
+  @doc """
+    Increments views on page
+  """
+  def inc_page_views(%Page{} = page) do
+    {1, [%Page{views: views}]} =
+      from(p in Page, where: p.id == ^page.id, select: [:views])
+      |> Repo.update_all(inc: [views: 1])
+
+    put_in(page.views, views)
+  end
   @doc """
   Gets a single author.
 
